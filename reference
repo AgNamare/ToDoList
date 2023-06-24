@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDoList</title>
+</head>
+<body>
+    <h1><%= kindOfDay %></h1>
+    <ul>
+        <% for(i=0; i<newListItem.length; i++){ %>
+            <li><%= newListItem[i] %></li>
+        <% } %>
+    </ul>
+     <form action="/" method="post">
+        <input type="text" name="newItem">
+        <button type="submit">Add</button>
+     </form>
+</body>
+</html>
+
+
+
+
+
+const express = require("express");
+const bodyParser = require("body-parser");
+
+const app = express();
+app.use(bodyParser.urlencoded({extended:true}));
+app.set('view engine', 'ejs');
+
+var today = new Date();
+var items = ["Buy Food", "Cook Food", "Eat Food"];
+app.get("/", (req, res)=>{  
+    console.log(today);
+    var options ={
+        weekday:'long',
+        day:'numeric',
+        month:'long'
+    }
+    var day =today.toLocaleDateString("en-us", options);
+    res.render('list',{kindOfDay:day, newListItem:items})
+});
+
+app.post("/", (req, res)=>{
+    var item =req.body.newItem;
+
+    items.push(item)
+    res.redirect("/")
+})
+
+app.listen(3000, (err)=>{
+    if(err) throw err;
+    console.log("Server started on port 3000");
+})
